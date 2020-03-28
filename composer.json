@@ -1,0 +1,19 @@
+{
+    "name": "khamsolt/laraweath",
+    "description": "This is package provide you to get api data weather",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Magomed Khamidov",
+            "email": "khamidov.che@gmail.com"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Khamsolt\\Laraweath\\": "src/"
+        }
+    }
+}
