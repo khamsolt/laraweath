@@ -26,5 +26,10 @@ return [
      *
      * @see https://weatherstack.com/documentation#language_parameter
      */
-    'language' => 'ru'
+    'language' => 'ru',
+
+    /**
+     * @see https://weatherstack.com/documentation#query_parameter
+     */
+    'query' => 'fetch:id'
 ];
