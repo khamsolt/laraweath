@@ -4,8 +4,10 @@
 namespace Khamsolt\Laraweath\Commands;
 
 
+use Exception;
 use Illuminate\Console\Command;
-use Khamsolt\Laraweath\Services\WeatherStackService;
+use Khamsolt\Laraweath\Models\WeatherStack;
+use Khamsolt\Laraweath\Services\LaraweathService;
 
 class LaraweathCommand extends Command
 {
@@ -14,7 +16,7 @@ class LaraweathCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'laraweath:fetch';
+    protected $signature = 'laraweath:fetch {--city=}';
 
     /**
      * The console command description.
@@ -23,22 +25,26 @@ class LaraweathCommand extends Command
      */
     protected $description = 'Weather API';
 
-    protected $service;
-
-    public function __construct(WeatherStackService $service)
-    {
-        parent::__construct();
-        $this->service = $service;
-    }
-
     /**
      * Execute the console command.
-     *
-     * @return mixed
+     * @param LaraweathService $service
      */
-    public function handle()
+    public function handle(LaraweathService $service)
     {
-        echo 'This is laraweath package' . PHP_EOL;
-        $json = $this->service->fetch();
+        $this->line('Laraweath:');
+        try {
+            $service->getApiConfig()->setQueryParameter($this->option('city') ?? 'Moscow');
+            $service->fetch();
+            $content = $service->getResponse()->getBody()->getContents();
+            $json = json_decode($content, true, 10, JSON_THROW_ON_ERROR );
+            if (isset($json['success'])) {
+                $this->warn($json['error']['info']);
+                return false;
+            }
+            $model = new WeatherStack($json);
+            $this->info($model->render());
+        } catch (Exception $exception) {
+            $this->error($exception->getMessage());
+        }
     }
 }
