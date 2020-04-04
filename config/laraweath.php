@@ -1,10 +1,12 @@
 <?php
 
 return [
+    'driver' => 'weather-stack',
+
     /**
      * Your API access key
      */
-    'token' => 'YOUR_API_TOKEN',
+    'token' => '837737dbee3c0ccdc0812e3ff6c676c1',
 
     /**
      * This is default city
