@@ -11,7 +11,8 @@
     ],
     "minimum-stability": "stable",
     "require": {
-        "guzzlehttp/guzzle": "^6.5"
+        "guzzlehttp/guzzle": "^6.5",
+        "spatie/array-to-xml": "^2.11"
     },
     "autoload": {
         "psr-4": {

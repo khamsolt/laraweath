@@ -4,12 +4,14 @@
 namespace Khamsolt\Laraweath;
 
 
-use Illuminate\Config\Repository as Config;
-use Illuminate\Contracts\Container\BindingResolutionException;
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use Illuminate\Support\ServiceProvider;
-use Khamsolt\Laraweath\Api\WeatherStack;
-use Khamsolt\Laraweath\Commands\LaraweathCommand;
-use Khamsolt\Laraweath\Contracts\Api\ApiRequestConfigurable;
+use Khamsolt\Laraweath\Api\Client\WeatherStack;
+use Khamsolt\Laraweath\Commands\Fetch;
+use Khamsolt\Laraweath\Contracts\Client\Fetchable;
+use Khamsolt\Laraweath\Contracts\Models\FileExportable;
+use Khamsolt\Laraweath\Services\ExportService;
 use Khamsolt\Laraweath\Services\LaraweathService;
 
 class LaraweathServiceProvider extends ServiceProvider
@@ -21,7 +23,7 @@ class LaraweathServiceProvider extends ServiceProvider
         ]);
         if ($this->app->runningInConsole()) {
             $this->commands([
-                LaraweathCommand::class
+                Fetch::class,
             ]);
         }
         $this->loadRoutesFrom(__DIR__ . '/../routes/laraweath.php');
@@ -30,16 +32,9 @@ class LaraweathServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/laraweath.php', 'laraweath');
-        $this->app->bind(ApiRequestConfigurable::class, function () {
-            /** @var Config $config */
-            $config = $this->app->get('config');
-            switch ($config->get('laraweath.driver', 'weather-stack')) {
-                case 'weather-stack':
-                    return new WeatherStack($config);
-                default:
-                    throw new BindingResolutionException('Laraweath Driver Not Found!');
-            }
-        });
+        $this->app->bind(ClientInterface::class, Client::class);
+        $this->app->bind(Fetchable::class, WeatherStack::class);
+        $this->app->bind(FileExportable::class, ExportService::class);
         $this->app->bind('Laraweath', LaraweathService::class);
     }
 }

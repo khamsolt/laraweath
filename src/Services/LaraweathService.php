@@ -4,65 +4,31 @@
 namespace Khamsolt\Laraweath\Services;
 
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\RequestOptions;
-use Illuminate\Config\Repository as Config;
-use Khamsolt\Laraweath\Contracts\Api\ApiRequestConfigurable;
-use Khamsolt\Laraweath\Contracts\Services\Fetchable;
-use Psr\Http\Message\ResponseInterface;
+use Khamsolt\Laraweath\Contracts\Client\Fetchable;
+use Khamsolt\Laraweath\Contracts\Models\FileExportable;
 
 /**
  * Class WeatherStackService
- * @package Khamsolt\Laraweath\Services
+ * @package Khamsolt\Laraweath\Client
  */
-class LaraweathService implements Fetchable
+class LaraweathService
 {
-    /** @var Config */
-    private $config;
-    /** @var Client */
-    private $client;
-    /** @var ApiRequestConfigurable */
-    private $apiConfig;
-    /** @var ResponseInterface */
-    private $response;
+    private $apiFetch;
+    private $fileExport;
 
     /**
      * WeatherStackService constructor.
-     * @param Config $config
-     * @param ApiRequestConfigurable $apiConfig
+     * @param Fetchable $apiFetch
+     * @param FileExportable $fileExport
      */
-    public function __construct(Config $config, ApiRequestConfigurable $apiConfig)
+    public function __construct(Fetchable $apiFetch, FileExportable $fileExport)
     {
-        $this->config = $config;
-        $this->apiConfig = $apiConfig;
-        $this->client = new Client();
+        $this->apiFetch   = $apiFetch;
+        $this->fileExport = $fileExport;
     }
 
-    /**
-     * @return void
-     * @throws RequestException
-     */
-    public function fetch(): void
+    public function currentWeather()
     {
-        $this->response = $this->client->get($this->apiConfig->getUrl(), [
-            RequestOptions::QUERY => $this->apiConfig->getQueryParameters()
-        ]);
-    }
-
-    /**
-     * @return ResponseInterface
-     */
-    public function getResponse(): ResponseInterface
-    {
-        return $this->response;
-    }
-
-    /**
-     * @return ApiRequestConfigurable
-     */
-    public function getApiConfig(): ApiRequestConfigurable
-    {
-        return $this->apiConfig;
+        //TODO For controller
     }
 }
